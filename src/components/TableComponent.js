@@ -7,7 +7,9 @@ import {
   getSortedRowModel,
 } from "@tanstack/react-table";
 import axios from "axios";
+import { ChevronUp, ChevronDown } from "react-feather";
 import "./TableComponent.css";
+import toast, { Toaster, useToaster } from "react-hot-toast";
 
 const columnHelper = createColumnHelper();
 
@@ -38,6 +40,11 @@ const columns = [
   columnHelper.accessor("items", {
     header: "Name",
     cell: (item) => item.row.original.items.map((i) => i.name).join(", "),
+    enableSorting: false,
+  }),
+  columnHelper.accessor("items", {
+    header: "Total ",
+    cell: (item) => item.row.original.items.map((i) => i.name).length,
   }),
   columnHelper.accessor(
     (info) => {
@@ -96,7 +103,7 @@ const TableComponent = () => {
   const [sorting, setSorting] = useState([]);
   const [grouping, setGrouping] = useState([]);
   const [originalData, setOriginalData] = useState([]);
-  const [render, setRerender] = useState(true);
+  const [rerender, setRerender] = useState(true);
 
   const getData = async () => {
     const result = await axios.get(
@@ -157,6 +164,7 @@ const TableComponent = () => {
 
   const handleSave = () => {
     data.forEach((row) => {});
+    toast.success("Successfully saved!");
   };
 
   const handleReset = () => {
@@ -168,7 +176,9 @@ const TableComponent = () => {
     });
     // Reset the data to the original data
     setData(originalData);
+    toast.success("Done Reset!");
     setRerender(true);
+    // window.location.reload();
   };
 
   const table = useReactTable({
@@ -182,10 +192,9 @@ const TableComponent = () => {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
   });
 
-  return (
+  return rerender ? (
     <div className="p-2">
       <div className="container">
         <div className="table-container">
@@ -209,8 +218,8 @@ const TableComponent = () => {
                             header.getContext()
                           )}
                           {{
-                            asc: " 🔼",
-                            desc: " 🔽",
+                            asc: <ChevronUp />,
+                            desc: <ChevronDown />,
                           }[header.column.getIsSorted()] ?? null}
                         </div>
                       )}
@@ -240,7 +249,10 @@ const TableComponent = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </div>
+  ) : (
+    <></>
   );
 };
 

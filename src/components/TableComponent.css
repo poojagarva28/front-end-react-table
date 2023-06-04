@@ -97,3 +97,11 @@ input[type="text"]:focus {
   outline: none;
   box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4);
 }
+svg {
+  position: relative;
+  top: 5px;
+  margin: 0px;
+  padding: 0px;
+  width: 18px;
+  height: 18px;
+}
